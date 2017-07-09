@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/aop 
+        http://www.springframework.org/schema/aop/spring-aop.xsd 
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context.xsd  
+        http://www.springframework.org/schema/tx 
+        http://www.springframework.org/schema/tx/spring-tx.xsd 
+        http://www.springframework.org/schema/mvc 
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd  ">
+	<!--开启aop代理支持，主要针对shiro的注解模式  -->
+	<aop:config proxy-target-class="true"></aop:config>
+	
+	<!--扫描controller注解 -->
+	<context:component-scan base-package="com.qit.controller"></context:component-scan>
+	<!--处理器映射器和处理器适配器，其中配置了转换器和校验器 -->
+	<mvc:annotation-driven conversion-service="convertionFactory"
+		validator="hibernateValidator"></mvc:annotation-driven>
+	<bean id="convertionFactory"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.qit.converter.String2DateConverter"></bean>
+			</list>
+		</property>
+	</bean>
+	<!--validate校验器 -->
+	<bean name="hibernateValidator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<!--校验器 -->
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+		<!--校验器文件,提供校验器的相关信息 -->
+		<property name="validationMessageSource" ref="messageSource"></property>
+	</bean>
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:validate</value>
+			</list>
+		</property>
+		<!--资源文件编码格式 -->
+		<property name="fileEncodings" value="UTF-8"></property>
+		<!--对资源文件缓存时间 -->
+		<property name="cacheSeconds" value="120"></property>
+	</bean>
+
+	<!--配置视图解析器 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<!--静态资源的解析 -->
+	<!-- <mvc:default-servlet-handler /> -->
+
+	<!--springmvc拦截器,如果上面的处理器适配器配置的是RequestMappingHandlerAdapter类型的那么就需要在上面 
+		进行配置，此处不需要，顺序很重要，先认证后授权 -->
+	<!-- <mvc:interceptors> <mvc:interceptor> <mvc:mapping path="/**"/> <bean 
+		class="com.qit.interceptor.LoginInInterceptor"></bean> </mvc:interceptor> 
+		<mvc:interceptor> <mvc:mapping path="/**"/> <bean class="com.qit.interceptor.AuthencatieInterceptor"></bean> 
+		</mvc:interceptor> </mvc:interceptors> -->
+
+	<!--全局异常处理器，只此一个，定义在多也没用 -->
+	<bean class="com.qit.exception.CustomExceptionResolver"></bean>
+
+	<!--文件上传解析器 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize">
+			<value>102400</value>
+		</property>
+	</bean>
+
+</beans>

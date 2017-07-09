@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE generatorConfiguration  
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"  
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 数据库驱动 -->
+	<classPathEntry location="E:/projectlib/mysql-connector-java-5.1.41-bin.jar" />
+	<context id="DB2Tables" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<property name="suppressDate" value="true" />
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="true" />
+		</commentGenerator>
+		<!--数据库链接URL，用户名、密码 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://192.168.3.100/qit-shiro" userId="qit" password="qit3875">
+		</jdbcConnection>
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+		<!-- 生成pojo -->
+		<javaModelGenerator targetPackage="com.qit.pojo"
+			targetProject="SSM">
+			<property name="enableSubPackages" value="false" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+		<!-- 生成映射文件的mapperXML文件 -->
+		<sqlMapGenerator targetPackage="com.qit.dao"
+			targetProject="SSM">
+			<property name="enableSubPackages" value="false" />
+		</sqlMapGenerator>
+		<!-- 生成mapper接口，dao接口 -->
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.qit.dao" targetProject="SSM">
+			<property name="enableSubPackages" value="false" />
+		</javaClientGenerator>
+		<!-- 要生成哪些表 -->
+		<table tableName="sys_user" domainObjectName="User"></table>
+		<table tableName="sys_role" domainObjectName="Role"></table>
+		<table tableName="sys_user_role" domainObjectName="User_Role"></table>
+		<table tableName="sys_role_permission" domainObjectName="Role_Permission"></table>
+		<table tableName="sys_permission" domainObjectName="Permission"></table>
+	</context>
+</generatorConfiguration>  
